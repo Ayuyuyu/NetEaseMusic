@@ -10,3 +10,6 @@ MUSIC_NETEASE_API_LOGIN = 'https://music.163.com/weapi/login?csrf_token='
 MUSIC_NETEASE_API_LOGIN_PHONE = 'https://music.163.com/weapi/login/cellphone'
 MUSIC_NETEASE_API_SIGN = 'http://music.163.com/weapi/point/dailyTask'
 MUSIC_NETEASE_API_USER_PLAYLIST = 'http://music.163.com/api/user/playlist/?'
+MUSIC_NETEASE_API_USER_RECOMMEND_PLAYLIST = 'http://music.163.com/weapi/v1/discovery/recommend/songs?csrf_token='
+MUSIC_NETEASE_API_FM = 'http://music.163.com/api/radio/get'
+

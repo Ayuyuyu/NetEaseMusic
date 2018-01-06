@@ -153,7 +153,7 @@ class NetEaseSongInfo():
             strbuf = connection.text
             json_result = json.loads(strbuf)
             return json_result
-        except Exception as e:
+        except  requests.exceptions.RequestException as e:
             #print traceback.print_exc()
             log.error(str(e))
             return False
@@ -173,7 +173,7 @@ class NetEaseSongInfo():
         print data
         try:
             return self.http_request("Login_POST", action, data)
-        except requests.exceptions.RequestException as e:
+        except Exception as e:
             log.error(e)
             return {"code": 501}
 
@@ -188,7 +188,7 @@ class NetEaseSongInfo():
         data = self.m_encrypt.encrypt_request(text)
         try:
             return self.http_request("Login_POST", action, data)
-        except requests.exceptions.RequestException as e:
+        except Exception as e:
             log.error(e)
             return {"code": 501}
 
@@ -200,12 +200,12 @@ class NetEaseSongInfo():
         data = self.m_encrypt.encrypt_request(text)
         try:
             return self.http_request("POST", action, data)
-        except requests.exceptions.RequestException as e:
+        except Exception as e:
             log.error(e)
             return -1
 
     #获取歌曲下载链接
-    def song_detail_link_api_api(self, music_ids, bit_rate=320000):
+    def song_detail_link_api_api(self, music_ids, bit_rate=320000): 
         try:
             action = MUSIC_NETEASE_API_SONG_DETAIL_LINK
             self.session.cookies.load()
@@ -246,14 +246,61 @@ class NetEaseSongInfo():
         try:
             data = self.http_request('GET', action)
             return data['playlist']
-        except (requests.exceptions.RequestException, KeyError) as e:
+        except Exception as e:
             log.error(e)
             return -1
+
+    # 每日推荐歌单
+    #"playlist":歌单列表(list)
+    #    "name":歌单名称
+    #    "creator":创建者信息
+    def user_recommend_playlist(self):
+        try:
+            action = MUSIC_NETEASE_API_USER_RECOMMEND_PLAYLIST
+            self.session.cookies.load()
+            csrf = ''
+            for cookie in self.session.cookies:
+                if cookie.name == '__csrf':
+                    csrf = cookie.value
+            if csrf == '':
+                return False
+            action += csrf
+            req = {'offset': 0, 'total': True, 'limit': 20, 'csrf_token': csrf}
+            page = self.http_request('POST', action,query=self.m_encrypt.encrypt_request(req))
+            results = json.loads(page.text)['recommend']
+            song_ids = []
+            for result in results:
+                song_ids.append(result['id'])
+            data = map(self.song_detail, song_ids)
+            return [d[0] for d in data]
+        except Exception as e:
+            log.error(e)
+            return False
+
+    # 私人FM
+    #"data" :歌曲信息(list)
+    #   'id': 歌曲ID
+    def personal_fm(self):
+        try:
+            action = MUSIC_NETEASE_API_FM
+            self.session.cookies.load()
+            data = self.http_request('GET', action)
+            return data['data']
+        except Exception as e:
+            log.error(e)
+            return -1
+
 
 if __name__ == "__main__":
     ne = NetEaseSongInfo()
     #print ne.song_detail([461347998])[0]["bMusic"]
-    
-    #print lo
-    ne.user_playlist(40109419)
+    #listfm = ne.personal_fm()
+    #for i in listfm:
+    #    print i
+    #   print "*"
+    #print lo#31080099
+    #aa = ne.user_playlist(40109419)
+    aa = ne.personal_fm()
+    for i in aa:
+        print i["id"]
      
