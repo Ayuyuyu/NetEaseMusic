@@ -288,7 +288,39 @@ class NetEaseSongInfo():
             return data['data']
         except Exception as e:
             log.error(e)
-            return -1
+            return False
+
+    # like
+    def fm_like(self, songid, like=True, time=25, alg='itembased'):
+        action = MUSIC_NETEASE_API_FM_LIKE + 'alg={}&trackId={}&like={}&time={}'.format(
+            alg, songid, 'true' if like else 'false', time)
+        try:
+            data = self.http_request('GET', action)
+            if data['code'] == 200:
+                return data
+            else:
+                return False
+        except requests.exceptions.RequestException as e:
+            log.error(e)
+            return False
+
+    def song_lyric(self, music_id):
+        action = MUSIC_NETEASE_API_SONG_LYC + 'os=osx&id={}&lv=-1&kv=-1&tv=-1'.format(  # NOQA
+            music_id)
+        try:
+            data = self.http_request('GET', action)
+            if 'lrc' in data and data['lrc']['lyric'] is not None:
+                lyric_info = data['lrc']['lyric']
+            else:
+                lyric_info = '未找到歌词'
+            if 'tlyric' in data and data['tlyric'].get('lyric') is not None:
+                lyric_info_trans = data['tlyric']['lyric'][1:]
+            else:
+                lyric_info_trans = '未找到歌词翻译'
+            return lyric_info,lyric_info_trans
+        except requests.exceptions.RequestException as e:
+            log.error(e)
+            return []
 
 
 if __name__ == "__main__":
@@ -299,8 +331,7 @@ if __name__ == "__main__":
     #    print i
     #   print "*"
     #print lo#31080099
-    #aa = ne.user_playlist(40109419)
-    aa = ne.personal_fm()
+    aa = ne.song_lyric(509518010)
     for i in aa:
-        print i["id"]
+        print i
      

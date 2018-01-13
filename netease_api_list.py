@@ -12,4 +12,6 @@ MUSIC_NETEASE_API_SIGN = 'http://music.163.com/weapi/point/dailyTask'
 MUSIC_NETEASE_API_USER_PLAYLIST = 'http://music.163.com/api/user/playlist/?'
 MUSIC_NETEASE_API_USER_RECOMMEND_PLAYLIST = 'http://music.163.com/weapi/v1/discovery/recommend/songs?csrf_token='
 MUSIC_NETEASE_API_FM = 'http://music.163.com/api/radio/get'
+MUSIC_NETEASE_API_FM_LIKE = 'http://music.163.com/api/radio/like?'
+MUSIC_NETEASE_API_SONG_LYC = 'http://music.163.com/api/song/lyric?'
 
